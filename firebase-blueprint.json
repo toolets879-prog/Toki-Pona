@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile and Toki Pona learning progress tracking.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth user identifier" },
+        "displayName": { "type": "string", "maxLength": 100, "description": "Display name" },
+        "email": { "type": "string", "maxLength": 255, "description": "User email address" },
+        "xp": { "type": "number", "description": "Total experience points gained" },
+        "hearts": { "type": "number", "description": "Current hearts remaining (max 5)" },
+        "streak": { "type": "number", "description": "Consecutive days active" },
+        "lastActiveDate": { "type": "string", "maxLength": 20, "description": "Last active day (YYYY-MM-DD)" },
+        "completedLessons": { "type": "string", "maxLength": 2000, "description": "Comma-separated list of completed lesson IDs" },
+        "unlockedNodes": { "type": "string", "maxLength": 2000, "description": "Comma-separated list of unlocked learning node IDs" },
+        "savedVocabulary": { "type": "string", "maxLength": 5000, "description": "JSON string of favorited or mastered words" },
+        "createdAt": { "type": "string", "description": "Account creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Last progress update timestamp" }
+      },
+      "required": ["uid", "xp", "hearts", "streak", "updatedAt"]
+    },
+    "PracticeHistory": {
+      "title": "PracticeHistory",
+      "description": "Log of completed practice or conversational sessions.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "User ID reference" },
+        "sessionType": { "type": "string", "maxLength": 50, "description": "Type of session: lesson, voice, flashcards" },
+        "lessonId": { "type": "string", "maxLength": 100, "description": "ID of lesson if applicable" },
+        "score": { "type": "number", "description": "Accuracy percentage or score" },
+        "xpEarned": { "type": "number", "description": "XP gained from this practice" },
+        "createdAt": { "type": "string", "description": "Timestamp of session completion" }
+      },
+      "required": ["userId", "sessionType", "score", "xpEarned"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile with gamified progress and stats"
+    },
+    "/users/{userId}/history/{historyId}": {
+      "schema": "PracticeHistory",
+      "description": "Practice logs and lesson outcomes for the user"
+    }
+  }
+}

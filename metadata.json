@@ -1,0 +1,10 @@
+{
+  "name": "Toki Pona Učebnice & AI Společník",
+  "description": "Interaktivní aplikace pro výuku minimalistického jazyka Toki Pona v češtině se stromem lekcí ve stylu Duolingo, slovníčkem, překladačem a hlasovou AI konverzací.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
