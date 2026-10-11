@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-heading: 'Fredoka', cursive, sans-serif;
+  --font-sans: 'Nunito', sans-serif;
+}

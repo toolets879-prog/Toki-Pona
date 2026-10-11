@@ -178,15 +178,15 @@ export const LessonModal: React.FC<LessonModalProps> = ({
   if (hearts <= 0) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
-        <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-2xl">
-          <div className="w-20 h-20 mx-auto rounded-full bg-rose-100 flex items-center justify-center text-rose-500">
+        <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-2xl border border-slate-200 dark:border-slate-800">
+          <div className="w-20 h-20 mx-auto rounded-full bg-rose-100 dark:bg-rose-950/60 flex items-center justify-center text-rose-500">
             <Heart className="w-10 h-10 fill-rose-500" />
           </div>
           <div>
-            <h3 className="text-2xl font-bold font-heading text-slate-900">
+            <h3 className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100">
               Došla ti srdíčka!
             </h3>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
               Nevadí, chyby jsou nejlepší způsob jak se učit. Můžeš si srdíčka ihned doplnit nebo zopakovat slovíčka.
             </p>
           </div>
@@ -204,7 +204,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
             </button>
             <button
               onClick={onClose}
-              className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+              className="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
             >
               Vrátit se na mapu
             </button>
@@ -219,30 +219,30 @@ export const LessonModal: React.FC<LessonModalProps> = ({
     const accuracy = Math.round((correctCount / node.questions.length) * 100);
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs animate-in zoom-in-95 duration-200">
-        <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 text-center space-y-6 shadow-2xl">
+        <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 text-center space-y-6 shadow-2xl border border-slate-200 dark:border-slate-800">
           <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-amber-400 to-yellow-300 flex items-center justify-center text-amber-950 shadow-lg animate-bounce">
             <Trophy className="w-12 h-12 stroke-[2.5]" />
           </div>
           <div>
-            <span className="text-xs font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
               Lekce dokončena!
             </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 mt-2">
+            <h3 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 dark:text-slate-100 mt-2">
               pona a! Skvělá práce!
             </h3>
-            <p className="text-slate-500 text-sm mt-1">
-              Úspěšně jsi zvládl(a) lekci <strong className="text-slate-800">{node.title}</strong>.
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+              Úspěšně jsi zvládl(a) lekci <strong className="text-slate-800 dark:text-slate-200">{node.title}</strong>.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-left">
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200">
-              <span className="text-xs font-bold text-amber-700 block">Získané XP</span>
-              <span className="text-2xl font-black text-amber-900">+{node.xpReward} XP</span>
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60">
+              <span className="text-xs font-bold text-amber-700 dark:text-amber-400 block">Získané XP</span>
+              <span className="text-2xl font-black text-amber-900 dark:text-amber-300">+{node.xpReward} XP</span>
             </div>
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
-              <span className="text-xs font-bold text-emerald-700 block">Úspěšnost</span>
-              <span className="text-2xl font-black text-emerald-900">{accuracy}%</span>
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60">
+              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 block">Úspěšnost</span>
+              <span className="text-2xl font-black text-emerald-900 dark:text-emerald-300">{accuracy}%</span>
             </div>
           </div>
 
@@ -265,18 +265,18 @@ export const LessonModal: React.FC<LessonModalProps> = ({
       : selectedOption !== null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-white overflow-hidden animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex flex-col bg-white dark:bg-slate-950 overflow-hidden animate-in fade-in duration-150 transition-colors">
       {/* Top Header */}
-      <div className="max-w-4xl w-full mx-auto px-4 py-4 flex items-center justify-between gap-4 border-b border-slate-100">
+      <div className="max-w-4xl w-full mx-auto px-4 py-4 flex items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800">
         <button
           onClick={onClose}
-          className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          className="p-2 rounded-xl text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
         >
           <X className="w-6 h-6" />
         </button>
 
         {/* Progress Bar */}
-        <div className="flex-1 bg-slate-100 h-3 rounded-full overflow-hidden">
+        <div className="flex-1 bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden">
           <div
             className="bg-emerald-500 h-full rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
@@ -284,7 +284,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
         </div>
 
         {/* Hearts */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-sm font-black">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 text-sm font-black">
           <Heart className="w-4 h-4 fill-rose-500" />
           <span>{hearts}</span>
         </div>
@@ -294,21 +294,21 @@ export const LessonModal: React.FC<LessonModalProps> = ({
       <div className="flex-1 overflow-y-auto max-w-2xl w-full mx-auto px-4 py-6 sm:py-10 flex flex-col justify-center">
         {/* Question Prompt */}
         <div className="mb-6 space-y-2">
-          <span className="text-xs font-black uppercase tracking-wider text-amber-600">
+          <span className="text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
             Otázka {currentQIndex + 1} z {node.questions.length}
           </span>
-          <h2 className="text-xl sm:text-2xl font-bold font-heading text-slate-900 leading-snug">
+          <h2 className="text-xl sm:text-2xl font-bold font-heading text-slate-900 dark:text-slate-100 leading-snug">
             {currentQ.prompt}
           </h2>
           {currentQ.subPrompt && (
-            <p className="text-xs sm:text-sm text-slate-500">{currentQ.subPrompt}</p>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{currentQ.subPrompt}</p>
           )}
 
           {/* Pronunciation button if Toki Pona sentence is present */}
           {(currentQ.tpSentence || (currentQ.type === 'multiple_choice_tp_to_cz' && currentQ.prompt)) && (
             <button
               onClick={() => sound.speakTokiPona(currentQ.tpSentence || currentQ.prompt)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-bold transition-colors cursor-pointer mt-1"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-xs font-bold transition-colors cursor-pointer mt-1 border border-emerald-200/60 dark:border-emerald-800/60"
             >
               <Volume2 className="w-4 h-4" />
               <span>Poslechnout výslovnost</span>
@@ -328,8 +328,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                   disabled={isAnswered}
                   className={`w-full p-4 rounded-2xl border-2 text-left font-bold text-sm sm:text-base transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 ${
                     isSelected
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-950 shadow-xs ring-2 ring-emerald-200'
-                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                      ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-200 shadow-xs ring-2 ring-emerald-200 dark:ring-emerald-900/60'
+                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-800 dark:text-slate-200'
                   }`}
                 >
                   <span className="font-heading">{option}</span>
@@ -348,9 +348,9 @@ export const LessonModal: React.FC<LessonModalProps> = ({
         {currentQ.type === 'word_scramble' && (
           <div className="space-y-6">
             {/* Target Assembly Area */}
-            <div className="min-h-[70px] p-4 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 flex flex-wrap items-center gap-2">
+            <div className="min-h-[70px] p-4 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 flex flex-wrap items-center gap-2">
               {selectedTokenIds.length === 0 ? (
-                <span className="text-xs text-slate-400 font-medium">
+                <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">
                   Klikáním na slova níže poskládej větu ve správném pořadí...
                 </span>
               ) : (
@@ -362,7 +362,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                       key={tokenId}
                       onClick={() => handleRemoveScrambleToken(idx)}
                       disabled={isAnswered}
-                      className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-800 font-extrabold text-sm shadow-xs hover:bg-rose-50 hover:border-rose-300 transition-colors cursor-pointer"
+                      className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-extrabold text-sm shadow-xs hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:border-rose-300 dark:hover:border-rose-800 transition-colors cursor-pointer"
                     >
                       {token.word}
                     </button>
@@ -383,8 +383,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({
                     disabled={isUsed || isAnswered}
                     className={`px-4 py-2.5 rounded-2xl border-2 font-black text-sm transition-all cursor-pointer shadow-xs ${
                       isUsed
-                        ? 'border-transparent bg-slate-100 text-slate-300 cursor-not-allowed'
-                        : 'border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 text-slate-800 active:scale-95'
+                        ? 'border-transparent bg-slate-100 dark:bg-slate-800/40 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 hover:border-emerald-400 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 active:scale-95'
                     }`}
                   >
                     {token.word}
@@ -397,7 +397,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
             {selectedTokenIds.length > 0 && !isAnswered && (
               <button
                 onClick={() => setSelectedTokenIds([])}
-                className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 mx-auto font-bold cursor-pointer"
+                className="text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 flex items-center gap-1 mx-auto font-bold cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Začít znovu</span>
@@ -411,10 +411,10 @@ export const LessonModal: React.FC<LessonModalProps> = ({
       <div
         className={`border-t transition-all duration-200 p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] ${
           !isAnswered
-            ? 'bg-white border-slate-200'
+            ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
             : isCorrect
-            ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
-            : 'bg-rose-50 border-rose-200 text-rose-950'
+            ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100'
+            : 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800 text-rose-950 dark:text-rose-100'
         }`}
       >
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">

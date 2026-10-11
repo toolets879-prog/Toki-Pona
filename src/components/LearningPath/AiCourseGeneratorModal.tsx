@@ -79,7 +79,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-purple-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-purple-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh] transition-colors">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 p-6 text-white shrink-0">
           <button
@@ -111,9 +111,9 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
         <div className="p-6 overflow-y-auto space-y-5">
           {/* API Key Check */}
           {!apiKey && (
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-2">
               <div className="flex items-center gap-2 font-bold">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
                 <span>Chybí Gemini API klíč</span>
               </div>
               <p>
@@ -130,7 +130,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
 
           {/* Topic Input */}
           <div className="space-y-1.5">
-            <label className="text-xs font-black uppercase tracking-wider text-slate-700 block">
+            <label className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
               O čem se chceš v Toki Pona učit?
             </label>
             <input
@@ -138,13 +138,13 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="např. Příprava jídla v kuchyni, Cesta vlakem, Medicína..."
-              className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-purple-500 focus:outline-hidden font-bold text-sm text-slate-900 placeholder:text-slate-300"
+              className="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-purple-500 focus:outline-hidden font-bold text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-500"
             />
           </div>
 
           {/* Difficulty Level */}
           <div className="space-y-1.5">
-            <label className="text-xs font-black uppercase tracking-wider text-slate-700 block">
+            <label className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
               Obtížnost lekcí:
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -155,8 +155,8 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   onClick={() => setLevel(lvl)}
                   className={`py-2 px-3 rounded-xl border-2 text-xs font-bold capitalize transition-all cursor-pointer ${
                     level === lvl
-                      ? 'border-purple-600 bg-purple-50 text-purple-900 shadow-xs'
-                      : 'border-slate-200 bg-white hover:border-slate-300 text-slate-600'
+                      ? 'border-purple-600 bg-purple-50 dark:bg-purple-950/50 text-purple-900 dark:text-purple-200 shadow-xs'
+                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-300'
                   }`}
                 >
                   {lvl}
@@ -167,7 +167,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
 
           {/* Preset topic ideas */}
           <div className="space-y-2">
-            <span className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <span className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
               <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
               <span>Nápady na oblíbená témata:</span>
             </span>
@@ -177,7 +177,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
                   key={i}
                   type="button"
                   onClick={() => setTopic(idea.prompt)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-purple-50 hover:text-purple-700 text-slate-700 text-xs font-bold transition-colors cursor-pointer border border-slate-200"
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/40 hover:text-purple-700 dark:hover:text-purple-300 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
                 >
                   {idea.title}
                 </button>
@@ -187,7 +187,7 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
 
           {/* Error Message */}
           {error && (
-            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2">
+            <div className="p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-800 dark:text-rose-300 text-xs font-medium flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -195,11 +195,11 @@ export const AiCourseGeneratorModal: React.FC<AiCourseGeneratorModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3 shrink-0">
+        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 flex items-center justify-between gap-3 shrink-0">
           <button
             onClick={onClose}
             disabled={isGenerating}
-            className="px-4 py-3 rounded-2xl text-slate-500 hover:text-slate-700 font-bold text-xs transition-colors cursor-pointer disabled:opacity-50"
+            className="px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-bold text-xs transition-colors cursor-pointer disabled:opacity-50"
           >
             Zrušit
           </button>

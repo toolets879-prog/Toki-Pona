@@ -218,10 +218,10 @@ export const Translator: React.FC<TranslatorProps> = ({
             <Languages className="w-3.5 h-3.5 text-blue-600" />
             <span>Gramatický analyzátor & překlad</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-heading">
             Překladač Toki Pona
           </h2>
-          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mt-0.5">
             Rozlož věty na základní částice li, e, la, pi a získej lingvistický rozbor.
           </p>
         </div>
@@ -241,17 +241,17 @@ export const Translator: React.FC<TranslatorProps> = ({
             setCzAnalysis(null);
             setAiError(null);
           }}
-          className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-xs transition-all flex items-center justify-center gap-2 text-xs font-black text-slate-800 cursor-pointer"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xs transition-all flex items-center justify-center gap-2 text-xs font-black text-slate-800 dark:text-slate-200 cursor-pointer"
         >
           <span>{direction === 'cz_to_tp' ? 'Čeština' : 'Toki Pona'}</span>
-          <ArrowRightLeft className="w-4 h-4 text-blue-600" />
+          <ArrowRightLeft className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <span>{direction === 'cz_to_tp' ? 'Toki Pona' : 'Čeština'}</span>
         </button>
       </div>
 
       {/* Quick Sample Sentences */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        <span className="text-xs font-bold text-slate-400 shrink-0">Vyzkoušet větu:</span>
+        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 shrink-0">Vyzkoušet větu:</span>
         {(direction === 'cz_to_tp' ? sampleSentencesCz : sampleSentencesTp).map((sample, idx) => (
           <button
             key={idx}
@@ -262,7 +262,7 @@ export const Translator: React.FC<TranslatorProps> = ({
               setCzAnalysis(null);
               setAiError(null);
             }}
-            className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-amber-100 text-[11px] font-bold text-slate-700 whitespace-nowrap transition-colors cursor-pointer border border-slate-200"
+            className="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-slate-700 text-[11px] font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
           >
             {sample}
           </button>
@@ -272,15 +272,15 @@ export const Translator: React.FC<TranslatorProps> = ({
       {/* Main Translation Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Input Card */}
-        <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 transition-colors">
           <div>
-            <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-slate-400 mb-2">
+            <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
               <span>{direction === 'tp_to_cz' ? 'Toki Pona' : 'Čeština (Vstup)'}</span>
               {direction === 'tp_to_cz' && (
                 <button
                   onClick={() => sound.speakTokiPona(inputText)}
                   title="Přehrát výslovnost"
-                  className="p-1 rounded-lg text-slate-400 hover:text-emerald-600 cursor-pointer"
+                  className="p-1 rounded-lg text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer"
                 >
                   <Volume2 className="w-4 h-4" />
                 </button>
@@ -300,11 +300,11 @@ export const Translator: React.FC<TranslatorProps> = ({
                   ? 'Zadej větu v Toki Pona (např. mi moku e kili)...'
                   : 'Zadej český výraz nebo větu k překladu a rozboru...'
               }
-              className="w-full text-base sm:text-lg font-bold text-slate-900 focus:outline-hidden resize-none placeholder:text-slate-300 font-heading"
+              className="w-full text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 bg-transparent focus:outline-hidden resize-none placeholder:text-slate-300 dark:placeholder:text-slate-600 font-heading"
             />
           </div>
 
-          <div className="flex items-center justify-between text-xs text-slate-400 border-t border-slate-100 pt-3">
+          <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-3">
             <span>{inputText.trim() ? inputText.trim().split(/\s+/).length : 0} slov</span>
             {inputText && (
               <button
@@ -314,7 +314,7 @@ export const Translator: React.FC<TranslatorProps> = ({
                   setCzAnalysis(null);
                   setAiError(null);
                 }}
-                className="hover:text-slate-600 font-bold cursor-pointer"
+                className="hover:text-slate-600 dark:hover:text-slate-300 font-bold cursor-pointer"
               >
                 Vymazat
               </button>
@@ -323,9 +323,9 @@ export const Translator: React.FC<TranslatorProps> = ({
         </div>
 
         {/* Output Card */}
-        <div className="p-6 rounded-3xl bg-gradient-to-br from-amber-50/60 to-white border border-amber-200/80 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="p-6 rounded-3xl bg-gradient-to-br from-amber-50/60 to-white dark:from-slate-900 dark:to-slate-850 border border-amber-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4 transition-colors">
           <div>
-            <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-amber-700 mb-2">
+            <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-2">
               <span className="flex items-center gap-1.5">
                 <span>{direction === 'tp_to_cz' ? 'Český význam' : 'Toki Pona Překlad'}</span>
                 {direction === 'cz_to_tp' && czAnalysis && (
@@ -339,7 +339,7 @@ export const Translator: React.FC<TranslatorProps> = ({
                   <button
                     onClick={() => sound.speakTokiPona(czAnalysis?.tokiPonaSentence || ruleBasedTranslation)}
                     title="Přehrát Toki Pona výslovnost"
-                    className="p-1 rounded-lg text-amber-700 hover:bg-amber-100 cursor-pointer"
+                    className="p-1 rounded-lg text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-slate-800 cursor-pointer"
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
@@ -353,36 +353,36 @@ export const Translator: React.FC<TranslatorProps> = ({
                     )
                   }
                   title="Kopírovat překlad"
-                  className="p-1 rounded-lg text-amber-700 hover:bg-amber-100 cursor-pointer"
+                  className="p-1 rounded-lg text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copied ? <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            <div className="text-base sm:text-lg font-extrabold text-emerald-950 font-heading min-h-[96px] leading-relaxed">
+            <div className="text-base sm:text-lg font-extrabold text-emerald-950 dark:text-emerald-300 font-heading min-h-[96px] leading-relaxed">
               {direction === 'cz_to_tp' ? (
                 czAnalysis?.tokiPonaSentence ? (
                   <div className="space-y-1">
-                    <span className="text-xl sm:text-2xl text-emerald-900 block font-heading">
+                    <span className="text-xl sm:text-2xl text-emerald-900 dark:text-emerald-300 block font-heading">
                       {czAnalysis.tokiPonaSentence}
                     </span>
                     {czAnalysis.literalBreakdown && (
-                      <span className="text-xs text-amber-900 font-semibold block pt-1 border-t border-amber-200/60">
+                      <span className="text-xs text-amber-900 dark:text-amber-300 font-semibold block pt-1 border-t border-amber-200/60 dark:border-slate-800">
                         Doslovný význam: „{czAnalysis.literalBreakdown}“
                       </span>
                     )}
                   </div>
                 ) : (
                   ruleBasedTranslation || (
-                    <span className="text-slate-300 font-normal text-sm">
+                    <span className="text-slate-300 dark:text-slate-600 font-normal text-sm">
                       Zadej český text a klikni na AI překlad s rozborem...
                     </span>
                   )
                 )
               ) : (
                 aiAnalysis?.translation || ruleBasedTranslation || (
-                  <span className="text-slate-300 font-normal text-sm">
+                  <span className="text-slate-300 dark:text-slate-600 font-normal text-sm">
                     Překlad se zobrazí zde...
                   </span>
                 )
@@ -391,8 +391,8 @@ export const Translator: React.FC<TranslatorProps> = ({
           </div>
 
           {/* AI Call to Action */}
-          <div className="border-t border-amber-200/50 pt-3 flex items-center justify-between">
-            <span className="text-[11px] text-amber-800 font-medium">
+          <div className="border-t border-amber-200/50 dark:border-slate-800 pt-3 flex items-center justify-between">
+            <span className="text-[11px] text-amber-800 dark:text-amber-400 font-medium">
               {direction === 'cz_to_tp' ? 'Lingvistický AI rozbor' : 'Linguistic parser'}
             </span>
             <button
@@ -415,21 +415,21 @@ export const Translator: React.FC<TranslatorProps> = ({
 
       {/* AI Error Notification */}
       {aiError && (
-        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2">
-          <Info className="w-4 h-4 shrink-0 text-rose-600" />
+        <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-800 dark:text-rose-300 text-xs font-medium flex items-center gap-2">
+          <Info className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400" />
           <span>{aiError}</span>
         </div>
       )}
 
       {/* Enhanced Czech to Toki Pona AI Breakdown Section */}
       {direction === 'cz_to_tp' && czAnalysis && (
-        <div className="p-6 rounded-3xl bg-white border border-emerald-200 shadow-md space-y-6 animate-in fade-in duration-200">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-slate-800 shadow-md space-y-6 animate-in fade-in duration-200 transition-colors">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <div className="flex items-center gap-2.5 text-emerald-950 font-black font-heading text-lg">
-              <Lightbulb className="w-5 h-5 text-amber-500 shrink-0" />
+            <div className="flex items-center gap-2.5 text-emerald-950 dark:text-emerald-200 font-black font-heading text-lg">
+              <Lightbulb className="w-5 h-5 text-amber-500" />
               <span>AI Lingvistický a filosofický rozbor českého výrazu</span>
             </div>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
               Přeloženo do Toki Pona
             </span>
           </div>
@@ -437,23 +437,23 @@ export const Translator: React.FC<TranslatorProps> = ({
           {/* Word by word breakdown cards */}
           {czAnalysis.wordByWord && czAnalysis.wordByWord.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Rozbor slovo od slova (Proč byla zvolena tato slova):
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {czAnalysis.wordByWord.map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-1.5"
+                    className="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-slate-800/80 border border-amber-200/80 dark:border-slate-700 space-y-1.5"
                   >
-                    <div className="flex items-center justify-between text-xs font-bold text-slate-500 border-b border-amber-200/40 pb-1">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 border-b border-amber-200/40 dark:border-slate-700 pb-1">
                       <span>Český pojem:</span>
-                      <strong className="text-slate-800 font-bold">{item.czPart}</strong>
+                      <strong className="text-slate-800 dark:text-slate-200 font-bold">{item.czPart}</strong>
                     </div>
-                    <div className="text-base font-black text-emerald-900 font-heading">
+                    <div className="text-base font-black text-emerald-900 dark:text-emerald-400 font-heading">
                       → {item.tpWord}
                     </div>
-                    <div className="text-xs text-amber-950 leading-relaxed font-medium">
+                    <div className="text-xs text-amber-950 dark:text-slate-300 leading-relaxed font-medium">
                       {item.reason}
                     </div>
                   </div>
@@ -465,16 +465,16 @@ export const Translator: React.FC<TranslatorProps> = ({
           {/* Applied Grammar Rules */}
           {czAnalysis.grammarRulesApplied && czAnalysis.grammarRulesApplied.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Použitá gramatická pravidla:
               </h4>
               <ul className="space-y-1.5">
                 {czAnalysis.grammarRulesApplied.map((rule, idx) => (
                   <li
                     key={idx}
-                    className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 flex items-start gap-2"
+                    className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-800 dark:text-slate-200 flex items-start gap-2"
                   >
-                    <span className="text-emerald-600 font-black">✓</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black">✓</span>
                     <span>{rule}</span>
                   </li>
                 ))}
@@ -484,8 +484,8 @@ export const Translator: React.FC<TranslatorProps> = ({
 
           {/* Philosophical Note */}
           {czAnalysis.philosophicalNote && (
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 text-xs text-purple-950 font-medium space-y-1">
-              <span className="font-extrabold uppercase tracking-wider text-[11px] text-purple-800 block">
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/40 dark:to-indigo-950/40 border border-purple-200 dark:border-purple-900/60 text-xs text-purple-950 dark:text-purple-200 font-medium space-y-1">
+              <span className="font-extrabold uppercase tracking-wider text-[11px] text-purple-800 dark:text-purple-300 block">
                 🧠 Filosofický pohled Toki Pona:
               </span>
               <p className="leading-relaxed">{czAnalysis.philosophicalNote}</p>
@@ -494,15 +494,15 @@ export const Translator: React.FC<TranslatorProps> = ({
 
           {/* Alternative Expressions */}
           {czAnalysis.alternativeExpressions && czAnalysis.alternativeExpressions.length > 0 && (
-            <div className="space-y-1.5 pt-1 border-t border-slate-100">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+            <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Alternativní možnosti vyjádření:
               </h4>
               <div className="flex flex-wrap gap-2">
                 {czAnalysis.alternativeExpressions.map((alt, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1.5 rounded-xl bg-slate-100 text-xs text-slate-700 font-bold border border-slate-200"
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-slate-700"
                   >
                     {alt}
                   </span>
@@ -515,18 +515,18 @@ export const Translator: React.FC<TranslatorProps> = ({
 
       {/* AI Deep Analysis Section for Toki Pona -> Czech */}
       {direction === 'tp_to_cz' && aiAnalysis && (
-        <div className="p-6 rounded-3xl bg-white border border-amber-200 shadow-md space-y-4 animate-in fade-in duration-200">
-          <div className="flex items-center gap-2 text-amber-900 font-extrabold font-heading text-base">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-slate-800 shadow-md space-y-4 animate-in fade-in duration-200 transition-colors">
+          <div className="flex items-center gap-2 text-amber-900 dark:text-amber-300 font-extrabold font-heading text-base">
             <Lightbulb className="w-5 h-5 text-amber-500" />
             <span>AI Lingvistický a filosofický rozbor (Google Gemini)</span>
           </div>
 
           {aiAnalysis.grammaticalBreakdown && (
             <div className="space-y-1.5">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Struktura věty:
               </h4>
-              <ul className="list-disc list-inside space-y-1 text-xs text-slate-700">
+              <ul className="list-disc list-inside space-y-1 text-xs text-slate-700 dark:text-slate-300">
                 {aiAnalysis.grammaticalBreakdown.map((item, i) => (
                   <li key={i}>{item}</li>
                 ))}
@@ -535,7 +535,7 @@ export const Translator: React.FC<TranslatorProps> = ({
           )}
 
           {aiAnalysis.tips && (
-            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 font-medium">
+            <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 text-xs text-amber-950 dark:text-amber-200 font-medium">
               💡 {aiAnalysis.tips}
             </div>
           )}
@@ -544,9 +544,9 @@ export const Translator: React.FC<TranslatorProps> = ({
 
       {/* Syntactic Structure Breakdown */}
       {grammarBreakdown && grammarBreakdown.length > 0 && (
-        <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-            <BookOpen className="w-4 h-4 text-blue-600" />
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
+          <div className="flex items-center gap-2 text-slate-900 dark:text-slate-100 font-bold text-sm">
+            <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             <span>Gramatický rozpad věty</span>
           </div>
 
@@ -554,15 +554,15 @@ export const Translator: React.FC<TranslatorProps> = ({
             {grammarBreakdown.map((part, idx) => (
               <div
                 key={idx}
-                className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1"
+                className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1"
               >
-                <div className="text-[10px] font-black uppercase tracking-wider text-blue-600">
+                <div className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
                   {part.label}
                 </div>
-                <div className="font-black text-sm text-slate-900 font-heading">
+                <div className="font-black text-sm text-slate-900 dark:text-slate-100 font-heading">
                   {part.value}
                 </div>
-                <div className="text-[11px] text-slate-500">{part.desc}</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400">{part.desc}</div>
               </div>
             ))}
           </div>
@@ -581,10 +581,10 @@ export const Translator: React.FC<TranslatorProps> = ({
                 key={idx}
                 className={`p-3 rounded-2xl border ${
                   token.isParticle
-                    ? 'bg-amber-50 border-amber-200 text-amber-950'
+                    ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-950 dark:text-amber-200'
                     : token.match
-                    ? 'bg-white border-slate-200 text-slate-900'
-                    : 'bg-rose-50 border-rose-200 text-rose-900'
+                    ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100'
+                    : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200'
                 }`}
               >
                 <div className="flex items-center justify-between gap-1">
@@ -593,7 +593,7 @@ export const Translator: React.FC<TranslatorProps> = ({
                     <span className="text-lg">{token.match.sitelenPonaSymbol}</span>
                   )}
                 </div>
-                <div className="text-xs text-emerald-800 font-semibold truncate mt-0.5">
+                <div className="text-xs text-emerald-800 dark:text-emerald-400 font-semibold truncate mt-0.5">
                   {token.match ? token.match.translationCz : 'neznámé slovo'}
                 </div>
               </div>

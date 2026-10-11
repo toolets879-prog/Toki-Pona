@@ -14,6 +14,8 @@ import {
   Key,
   LogIn,
   LogOut,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { TabType, UserProgressState } from '../types/index.ts';
 import { sound } from '../lib/audio.ts';
@@ -28,6 +30,8 @@ interface NavbarProps {
   onSignInGoogle: () => void;
   onSignOut: () => void;
   isAuthenticated: boolean;
+  isDarkMode: boolean;
+  onToggleDarkMode: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,6 +44,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSignInGoogle,
   onSignOut,
   isAuthenticated,
+  isDarkMode,
+  onToggleDarkMode,
 }) => {
   const tabs = [
     { id: 'learn' as TabType, label: 'Lekce', icon: Compass },
@@ -53,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       {/* Top Header Navbar */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-100 shadow-xs">
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-amber-100 dark:border-slate-800 shadow-xs transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
             {/* Brand Logo */}
@@ -65,13 +71,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 󱥪
               </div>
               <div>
-                <span className="font-extrabold text-lg sm:text-xl tracking-tight text-amber-950 flex items-center gap-1.5 font-heading leading-tight">
+                <span className="font-extrabold text-lg sm:text-xl tracking-tight text-amber-950 dark:text-amber-100 flex items-center gap-1.5 font-heading leading-tight">
                   toki pona
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 hidden xs:inline-block">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hidden xs:inline-block">
                     učebnice
                   </span>
                 </span>
-                <p className="text-[11px] text-amber-700 font-medium hidden sm:block">
+                <p className="text-[11px] text-amber-700 dark:text-amber-400/80 font-medium hidden sm:block">
                   jazyk dobra a jednoduchosti
                 </p>
               </div>
@@ -91,13 +97,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }}
                     className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-bold transition-all duration-150 cursor-pointer ${
                       isActive
-                        ? 'bg-amber-100 text-amber-950 shadow-xs ring-1 ring-amber-300/60'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-amber-50/60'
+                        ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-950 dark:text-amber-300 shadow-xs ring-1 ring-amber-300/60 dark:ring-amber-500/40'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-amber-50/60 dark:hover:bg-slate-800'
                     }`}
                   >
                     <Icon
                       className={`w-4 h-4 ${
-                        isActive ? 'text-amber-600 stroke-[2.5]' : 'text-slate-400'
+                        isActive ? 'text-amber-600 dark:text-amber-400 stroke-[2.5]' : 'text-slate-400 dark:text-slate-500'
                       }`}
                     />
                     <span>{tab.label}</span>
@@ -107,11 +113,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             </nav>
 
             {/* User Stats & Compact Controls */}
-            <div className="flex items-center gap-1.5 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
               {/* Streak */}
               <div
                 title={`${progress.streak} dní v řadě!`}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-orange-50 border border-orange-200 text-orange-600 text-xs sm:text-sm font-extrabold"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/50 border border-orange-200 dark:border-orange-900/60 text-orange-600 dark:text-orange-400 text-xs sm:text-sm font-extrabold"
               >
                 <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-500 fill-orange-500 animate-pulse" />
                 <span>{progress.streak}</span>
@@ -120,7 +126,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Hearts */}
               <div
                 title={`${progress.hearts} z ${progress.maxHearts} životů zbývá`}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs sm:text-sm font-extrabold"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 text-xs sm:text-sm font-extrabold"
               >
                 <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 fill-rose-500" />
                 <span>{progress.hearts}</span>
@@ -129,20 +135,34 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* XP */}
               <div
                 title={`${progress.xp} celkových zkušeností`}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs sm:text-sm font-extrabold"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-extrabold"
               >
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 fill-amber-400" />
                 <span>{progress.xp} <span className="hidden xs:inline">XP</span></span>
               </div>
+
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={onToggleDarkMode}
+                title={isDarkMode ? 'Přepnout na světlý režim' : 'Přepnout na tmavý režim'}
+                aria-label={isDarkMode ? 'Přepnout na světlý režim' : 'Přepnout na tmavý režim'}
+                className="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 fill-amber-400/20" />
+                ) : (
+                  <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" />
+                )}
+              </button>
 
               {/* API Key Modal Button */}
               <button
                 onClick={onOpenApiKeyModal}
                 title="Nastavit Gemini API klíč"
                 aria-label="Nastavit Gemini API klíč"
-                className="p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-amber-700 hover:bg-amber-100 transition-colors cursor-pointer border border-slate-200 bg-white"
+                className="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
               >
-                <Key className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" />
+                <Key className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400" />
               </button>
 
               {/* Audio Toggle */}
@@ -150,10 +170,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onToggleSound}
                 title={soundEnabled ? 'Zvuky zapnuty' : 'Zvuky ztlumeny'}
                 aria-label={soundEnabled ? 'Zvuky zapnuty' : 'Zvuky ztlumeny'}
-                className="p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-amber-700 hover:bg-amber-100 transition-colors cursor-pointer border border-slate-200 bg-white"
+                className="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-amber-700 hover:bg-amber-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
               >
                 {soundEnabled ? (
-                  <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
+                  <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400" />
                 ) : (
                   <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
                 )}
@@ -164,7 +184,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   onClick={onSignOut}
                   title="Odhlásit se"
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer border border-slate-200"
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Odhlásit</span>
@@ -187,7 +207,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Fixed Bottom Navigation Bar - Icons ONLY without text */}
       <nav
         aria-label="Mobilní navigace"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-amber-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 py-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] flex items-center justify-around"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-amber-200/90 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.4)] px-2 py-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] flex items-center justify-around transition-colors duration-200"
       >
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -203,18 +223,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label={tab.label}
               className={`relative flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-150 cursor-pointer active:scale-95 ${
                 isActive
-                  ? 'bg-amber-100 text-amber-950 shadow-xs ring-1 ring-amber-300'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-amber-50/50'
+                  ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-950 dark:text-amber-200 shadow-xs ring-1 ring-amber-300 dark:ring-amber-500/40'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-amber-50/50 dark:hover:bg-slate-800/50'
               }`}
             >
               <Icon
                 className={`w-6 h-6 transition-transform ${
-                  isActive ? 'text-amber-700 stroke-[2.5] scale-110' : 'text-slate-500'
+                  isActive ? 'text-amber-700 dark:text-amber-400 stroke-[2.5] scale-110' : 'text-slate-500 dark:text-slate-400'
                 }`}
               />
               {/* Active Indicator Dot */}
               {isActive && (
-                <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-amber-600 animate-in zoom-in duration-150" />
+                <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-amber-600 dark:bg-amber-400 animate-in zoom-in duration-150" />
               )}
             </button>
           );

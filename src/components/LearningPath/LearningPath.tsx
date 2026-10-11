@@ -177,31 +177,31 @@ export const LearningPath: React.FC<LearningPathProps> = ({
               <div
                 className={`p-5 rounded-3xl mb-8 border shadow-sm transition-all ${
                   isSectionComplete
-                    ? 'bg-emerald-50/80 border-emerald-200'
-                    : 'bg-white border-amber-100'
+                    ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800'
+                    : 'bg-white dark:bg-slate-900 border-amber-100 dark:border-slate-800'
                 }`}
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider text-amber-600 block">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
                       Úroveň {sIndex + 1}
                     </span>
-                    <h3 className="text-lg font-extrabold text-slate-900 font-heading">
+                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100 font-heading">
                       {section.title}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {section.description}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-xs font-black text-slate-700 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                    <span className="text-xs font-black text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
                       {completedInSection} / {section.nodes.length}
                     </span>
                   </div>
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full bg-slate-100 h-2 rounded-full mt-3.5 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mt-3.5 overflow-hidden">
                   <div
                     className="bg-emerald-500 h-full rounded-full transition-all duration-500"
                     style={{
@@ -239,10 +239,10 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                         disabled={!isUnlocked}
                         className={`relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md group ${
                           isCompleted
-                            ? 'bg-amber-400 text-amber-950 ring-4 ring-amber-200 hover:scale-105 hover:bg-amber-300'
+                            ? 'bg-amber-400 dark:bg-amber-500 text-amber-950 ring-4 ring-amber-200 dark:ring-amber-500/30 hover:scale-105 hover:bg-amber-300'
                             : isCurrent
-                            ? 'bg-emerald-500 text-white ring-8 ring-emerald-100 hover:scale-105 shadow-emerald-200 shadow-xl'
-                            : 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-80'
+                            ? 'bg-emerald-500 text-white ring-8 ring-emerald-100 dark:ring-emerald-900/40 hover:scale-105 shadow-emerald-200 dark:shadow-emerald-950 shadow-xl'
+                            : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-80'
                         }`}
                       >
                         {/* Node Inner Icon */}
@@ -260,7 +260,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                             <Sparkles className="w-8 h-8 animate-spin-slow" />
                           </div>
                         ) : (
-                          <Lock className="w-7 h-7 text-slate-400" />
+                          <Lock className="w-7 h-7 text-slate-400 dark:text-slate-500" />
                         )}
                       </button>
 
@@ -268,12 +268,12 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                       <div className="mt-2 text-center max-w-[140px]">
                         <span
                           className={`text-xs font-extrabold block truncate ${
-                            isUnlocked ? 'text-slate-900' : 'text-slate-400'
+                            isUnlocked ? 'text-slate-900 dark:text-slate-100' : 'text-slate-400 dark:text-slate-500'
                           }`}
                         >
                           {node.title}
                         </span>
-                        <span className="text-[10px] text-slate-400 block truncate">
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 block truncate">
                           {node.subtitle}
                         </span>
                       </div>
@@ -289,14 +289,14 @@ export const LearningPath: React.FC<LearningPathProps> = ({
                     className={`relative p-5 rounded-3xl border transition-all cursor-pointer flex flex-col items-center gap-2 group ${
                       isSectionComplete
                         ? isChestClaimed
-                          ? 'bg-amber-100/70 border-amber-300 text-amber-900 shadow-sm'
+                          ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-300 shadow-sm'
                           : 'bg-gradient-to-b from-amber-300 to-yellow-400 border-amber-400 text-amber-950 shadow-lg hover:scale-105 animate-pulse'
-                        : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-60'
+                        : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
                     }`}
                   >
                     {isChestClaimed ? (
                       <>
-                        <Trophy className="w-8 h-8 text-amber-700" />
+                        <Trophy className="w-8 h-8 text-amber-700 dark:text-amber-400" />
                         <span className="text-[11px] font-black uppercase tracking-wider">
                           Odměna vybrána!
                         </span>

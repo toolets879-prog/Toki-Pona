@@ -41,6 +41,34 @@ export default function App() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Dark Mode Theme State & Persistence
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const saved = localStorage.getItem('tokipona_theme');
+    if (saved) return saved === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('tokipona_theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('tokipona_theme', 'light');
+    }
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', isDarkMode ? '#090d16' : '#fef9ee');
+    }
+  }, [isDarkMode]);
+
+  const handleToggleDarkMode = () => {
+    sound.playClick();
+    setIsDarkMode((prev) => !prev);
+  };
+
   // Initialize and listen to Firebase Auth
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -218,7 +246,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-amber-50/30 flex flex-col font-sans">
+    <div className="min-h-screen bg-amber-50/30 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
       {/* Top Header Navbar */}
       <Navbar
         currentTab={currentTab}
@@ -230,6 +258,8 @@ export default function App() {
         onSignInGoogle={handleSignInGoogle}
         onSignOut={handleSignOut}
         isAuthenticated={isAuthenticated}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={handleToggleDarkMode}
       />
 
       {/* Main Content Area */}
@@ -278,6 +308,8 @@ export default function App() {
             onSignOut={handleSignOut}
             onRefillHearts={handleRefillHearts}
             onResetProgress={handleResetProgress}
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={handleToggleDarkMode}
           />
         </div>
       </main>
