@@ -156,3 +156,199 @@ Vrať JSON:
   };
 }
 
+/**
+ * Analyzuje český výraz, přeloží ho do Toki Pona a vytvoří podrobný lingvistický a filosofický rozbor.
+ */
+export async function analyzeCzechToTokiPonaWithGemini(
+  czechText: string,
+  apiKey?: string
+): Promise<import('../types/index.ts').CzechToTokiPonaAnalysis> {
+  const effectiveKey = apiKey || getStoredGeminiKey();
+  if (!effectiveKey) {
+    throw new Error('Pro AI překlad a rozbor je potřeba připojit Gemini API klíč v horním menu.');
+  }
+
+  const ai = new GoogleGenAI({ apiKey: effectiveKey });
+
+  const prompt = `Jsi přední lingvistický expert na minimalistický umělý jazyk Toki Pona (podle Sonji Lang) a mluvíš česky.
+Tvým úkolem je:
+1. Vzít zadaný český výraz nebo větu: "${czechText}"
+2. Analyzovat jeho význam a filosoficky ho zjednodušit na základní koncepty Toki Pona (~120 slov pu).
+3. Vytvořit gramaticky perfektní překlad do Toki Pona (se správným užitím částic 'li', 'e', 'la', 'pi', 'o').
+4. Udělat podrobný malý rozbor:
+   - doslovný překlad (literalBreakdown)
+   - rozbor slovo po slovu (wordByWord: česká část -> použité slovo v toki pona -> proč bylo zvoleno)
+   - aplikovaná gramatická pravidla (grammarRulesApplied)
+   - filosofická poznámka (philosophicalNote - jak Toki Pona nahlíží na tento koncept)
+   - alternativní způsoby vyjádření (alternativeExpressions - 1 až 2 jiné pohledy)
+
+Vrať VÝHRADNĚ platný JSON ve tvaru:
+{
+  "tokiPonaSentence": "přeložená věta v toki pona",
+  "literalBreakdown": "doslovný význam v češtině (např. 'člověk dobrý jí plod sladký')",
+  "wordByWord": [
+    {
+      "czPart": "část české věty",
+      "tpWord": "slovo v toki pona",
+      "reason": "proč je toto slovo v kontextu použito"
+    }
+  ],
+  "grammarRulesApplied": [
+    "pravidlo 1 (např. částice 'li' vynechána, protože podmětem je samostatné 'mi')",
+    "pravidlo 2"
+  ],
+  "philosophicalNote": "krátké vysvětlení, jak Toki Pona zjednodušuje tento pojem",
+  "alternativeExpressions": [
+    "jiná možnost v toki pona (s českým významem)"
+  ]
+}`;
+
+  for (const modelName of FALLBACK_MODELS) {
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.2,
+        },
+      });
+      const text = cleanJsonString(response.text || '{}');
+      const parsed = JSON.parse(text);
+      return {
+        tokiPonaSentence: parsed.tokiPonaSentence || '',
+        literalBreakdown: parsed.literalBreakdown || '',
+        wordByWord: Array.isArray(parsed.wordByWord) ? parsed.wordByWord : [],
+        grammarRulesApplied: Array.isArray(parsed.grammarRulesApplied) ? parsed.grammarRulesApplied : [],
+        philosophicalNote: parsed.philosophicalNote || '',
+        alternativeExpressions: Array.isArray(parsed.alternativeExpressions) ? parsed.alternativeExpressions : [],
+      };
+    } catch (err) {
+      if (String(err).includes('404') || String(err).includes('NOT_FOUND')) {
+        continue;
+      }
+      console.warn('Czech to TP AI error:', err);
+      break;
+    }
+  }
+
+  throw new Error('Nepodařilo se vygenerovat AI rozbor pro zadaný český text.');
+}
+
+/**
+ * Vygeneruje kompletní interaktivní kurz na libovolné zadané téma do mapy lekcí.
+ */
+export async function generateTokiPonaCourseWithGemini({
+  topic,
+  level = 'střední',
+  apiKey,
+}: {
+  topic: string;
+  level?: 'začátečník' | 'střední' | 'pokročilý';
+  apiKey?: string;
+}): Promise<import('../types/index.ts').UnitSection> {
+  const effectiveKey = apiKey || getStoredGeminiKey();
+  if (!effectiveKey) {
+    throw new Error('Pro vygenerování kurzu s AI je potřeba připojit Gemini API klíč.');
+  }
+
+  const ai = new GoogleGenAI({ apiKey: effectiveKey });
+  const uniqueId = `custom-${Date.now()}`;
+
+  const prompt = `Jsi autor vzdělávacích kurzů pro Toki Pona ve stylu Duolingo.
+Uživatel si přeje vygenerovat nový ucelený kurz (UnitSection) na téma: "${topic}".
+Úroveň náročnosti: ${level}. Celá komunikace a instrukce musí být v češtině, jazyk cvičení je Toki Pona.
+
+Vytvoř sekci, která obsahuje 2 až 3 lekce (nodes). Každá lekce musí obsahovat 3 až 4 různorodé interaktivní otázky:
+- 'multiple_choice_cz_to_tp' (výběr z možností: překlad z češtiny do toki pona)
+- 'multiple_choice_tp_to_cz' (výběr z možností: překlad z toki pona do češtiny)
+- 'word_scramble' (sestavení věty z dostupných slov - wordsAvailable musí obsahovat VŠECHNA slova ze správné odpovědi PLUS 2 až 3 matoucí slova navíc!)
+- 'fill_in_blank' (doplňovačka - tpSentence obsahuje '___', options obsahuje možnosti včetně správné)
+
+DŮLEŽITÁ PRAVIDLA PRO OTÁZKY:
+1. U 'word_scramble':
+   - 'correctAnswer' MUSÍ být pole stringů ve správném pořadí, např. ["mi", "moku", "e", "kili"].
+   - 'wordsAvailable' MUSÍ být pole stringů, které obsahuje všechna slova z correctAnswer plus 2-3 slova navíc jako návnadu!
+2. U 'multiple_choice_*' a 'fill_in_blank':
+   - 'correctAnswer' je string (přesně shodný s jednou z položek v 'options').
+   - 'options' má 3 až 4 možnosti.
+3. Všechna použitá slova v Toki Pona musí být autentická z oficiálního seznamu (nimi pu)!
+4. 'unitColor' zvol ze: 'emerald', 'amber', 'purple', 'sky', 'rose', 'indigo'.
+
+Vrať VÝHRADNĚ platný JSON ve tvaru odpovídajícím rozhraní UnitSection:
+{
+  "id": "${uniqueId}",
+  "title": "Sekce: Název tématu v češtině",
+  "description": "Stručný popis toho, co se student v kurzu naučí",
+  "color": "sky",
+  "nodes": [
+    {
+      "id": "${uniqueId}-l1",
+      "unitId": "${uniqueId}",
+      "unitTitle": "Sekce: Název tématu",
+      "unitColor": "sky",
+      "title": "Název 1. lekce",
+      "subtitle": "Klíčová slova oddělená čárkou",
+      "iconName": "Sparkles",
+      "grammarNote": "Vysvětlení gramatiky a jak se téma v Toki Pona vyjadřuje.",
+      "newWords": ["slovo1", "slovo2", "slovo3"],
+      "xpReward": 25,
+      "questions": [
+        {
+          "id": "${uniqueId}-q1",
+          "type": "multiple_choice_cz_to_tp",
+          "prompt": "Česká otázka",
+          "options": ["možnost A", "možnost B", "možnost C"],
+          "correctAnswer": "možnost A",
+          "explanation": "České vysvětlení správné odpovědi."
+        },
+        {
+          "id": "${uniqueId}-q2",
+          "type": "word_scramble",
+          "prompt": "Sestav větu: '...'",
+          "czSentence": "český překlad",
+          "wordsAvailable": ["slovoA", "slovoB", "slovoC", "slovoD", "slovoE"],
+          "correctAnswer": ["slovoA", "slovoB", "slovoC"],
+          "explanation": "Vysvětlení větné stavby."
+        }
+      ]
+    }
+  ]
+}`;
+
+  for (const modelName of FALLBACK_MODELS) {
+    try {
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+          temperature: 0.4,
+        },
+      });
+      const text = cleanJsonString(response.text || '{}');
+      const parsed: import('../types/index.ts').UnitSection = JSON.parse(text);
+      if (parsed && parsed.title && Array.isArray(parsed.nodes) && parsed.nodes.length > 0) {
+        // Ensure proper IDs
+        parsed.id = parsed.id || uniqueId;
+        parsed.color = parsed.color || 'sky';
+        parsed.nodes.forEach((n, idx) => {
+          n.id = n.id || `${parsed.id}-l${idx + 1}`;
+          n.unitId = parsed.id;
+          n.unitTitle = parsed.title;
+          n.unitColor = parsed.color;
+        });
+        return parsed;
+      }
+    } catch (err) {
+      if (String(err).includes('404') || String(err).includes('NOT_FOUND')) {
+        continue;
+      }
+      console.warn('Course generation model error:', err);
+      break;
+    }
+  }
+
+  throw new Error('Generování kurzu selhalo. Zkontrolujte prosím připojení a platnost API klíče.');
+}
+

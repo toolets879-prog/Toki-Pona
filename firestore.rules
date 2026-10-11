@@ -30,7 +30,8 @@ service cloud.firestore {
         && (!('lastActiveDate' in data) || (data.lastActiveDate is string && data.lastActiveDate.size() <= 30))
         && (!('completedLessons' in data) || (data.completedLessons is string && data.completedLessons.size() <= 4000))
         && (!('unlockedNodes' in data) || (data.unlockedNodes is string && data.unlockedNodes.size() <= 4000))
-        && (!('savedVocabulary' in data) || (data.savedVocabulary is string && data.savedVocabulary.size() <= 10000));
+        && (!('savedVocabulary' in data) || (data.savedVocabulary is string && data.savedVocabulary.size() <= 10000))
+        && (!('customSections' in data) || (data.customSections is string && data.customSections.size() <= 50000));
     }
 
     function isValidHistory(data, userId) {

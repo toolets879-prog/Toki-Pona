@@ -55,9 +55,9 @@ export const Profile: React.FC<ProfileProps> = ({
   const todayIdx = (new Date().getDay() + 6) % 7; // Monday = 0
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8">
       {/* Profile Card Header */}
-      <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="p-5 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           <div className="w-20 h-20 rounded-3xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-4xl shadow-inner">
             {rank.badge}

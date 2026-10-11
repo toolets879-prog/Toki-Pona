@@ -62,6 +62,7 @@ export async function fetchUserProgressFromFirestore(userId: string): Promise<Us
         completedLessons: data.completedLessons ? data.completedLessons.split(',').filter(Boolean) : local.completedLessons,
         unlockedNodes: data.unlockedNodes ? data.unlockedNodes.split(',').filter(Boolean) : local.unlockedNodes,
         savedWords: data.savedVocabulary ? JSON.parse(data.savedVocabulary) : local.savedWords,
+        customSections: data.customSections ? JSON.parse(data.customSections) : local.customSections || [],
       };
     }
     return null;
@@ -87,6 +88,7 @@ export async function saveUserProgressToFirestore(state: UserProgressState) {
       completedLessons: state.completedLessons.join(','),
       unlockedNodes: state.unlockedNodes.join(','),
       savedVocabulary: JSON.stringify(state.savedWords),
+      customSections: JSON.stringify(state.customSections || []),
       updatedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
     }, { merge: true });

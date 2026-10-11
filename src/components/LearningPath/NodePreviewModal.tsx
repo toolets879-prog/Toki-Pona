@@ -97,8 +97,8 @@ export const NodePreviewModal: React.FC<NodePreviewModalProps> = ({
           </div>
 
           {/* Bottom Call to Action */}
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
               <Sparkles className="w-4 h-4 text-amber-500 fill-amber-400" />
               <span>+{node.xpReward} XP za dokončení</span>
             </div>
@@ -108,7 +108,7 @@ export const NodePreviewModal: React.FC<NodePreviewModalProps> = ({
                 onClose();
                 onStartLesson(node);
               }}
-              className="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Play className="w-4 h-4 fill-white" />
               <span>{isCompleted ? 'Zopakovat lekci' : 'Začít lekci'}</span>

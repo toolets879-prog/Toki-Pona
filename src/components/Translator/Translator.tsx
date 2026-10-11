@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { TOKI_PONA_DICTIONARY } from '../../data/tokiPonaDictionary.ts';
 import { sound } from '../../lib/audio.ts';
-import { explainTokiPonaSentenceWithGemini } from '../../lib/gemini.ts';
+import { explainTokiPonaSentenceWithGemini, analyzeCzechToTokiPonaWithGemini } from '../../lib/gemini.ts';
+import { CzechToTokiPonaAnalysis } from '../../types/index.ts';
 
 interface TranslatorProps {
   apiKey?: string;
@@ -23,17 +24,27 @@ export const Translator: React.FC<TranslatorProps> = ({
   apiKey,
   onOpenApiKeyModal,
 }) => {
-  const [direction, setDirection] = useState<'tp_to_cz' | 'cz_to_tp'>('tp_to_cz');
-  const [inputText, setInputText] = useState('toki pona li pona tawa mi');
+  const [direction, setDirection] = useState<'tp_to_cz' | 'cz_to_tp'>('cz_to_tp');
+  const [inputText, setInputText] = useState('Můj dobrý přítel vaří výborné jídlo pro celou rodinu.');
   const [aiAnalysis, setAiAnalysis] = useState<{
     translation: string;
     grammaticalBreakdown: string[];
     tips: string;
   } | null>(null);
+  const [czAnalysis, setCzAnalysis] = useState<CzechToTokiPonaAnalysis | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
-  const sampleSentences = [
+  const sampleSentencesCz = [
+    'Můj dobrý přítel vaří výborné jídlo pro celou rodinu.',
+    'Chci se naučit tento jednoduchý jazyk.',
+    'Včera v noci jsem viděl krásné hvězdy na obloze.',
+    'Pes běží rychle k velkému jezeru.',
+    'Všechno na světě je dobré a jednoduché.',
+  ];
+
+  const sampleSentencesTp = [
     'toki pona li pona tawa mi',
     'mi moku e kili suwi',
     'ona li lukin e tomo suli',
@@ -150,8 +161,8 @@ export const Translator: React.FC<TranslatorProps> = ({
       });
       return czWords.join(' ');
     } else {
-      // rough cz to tp reverse matching
-      const words = inputText.toLowerCase().split(/\s+/);
+      // rough cz to tp reverse dictionary lookup
+      const words = inputText.toLowerCase().replace(/[.,!?;:]/g, '').split(/\s+/).filter(Boolean);
       const tpWords = words.map((w) => {
         const found = TOKI_PONA_DICTIONARY.find(
           (dict) =>
@@ -165,16 +176,27 @@ export const Translator: React.FC<TranslatorProps> = ({
   }, [tokens, direction, inputText]);
 
   const handleDeepAiAnalyze = async () => {
+    if (!inputText.trim()) return;
     setLoadingAi(true);
+    setAiError(null);
+    sound.playClick();
+
     try {
-      const res = await explainTokiPonaSentenceWithGemini(inputText, apiKey);
-      setAiAnalysis(res);
-    } catch {
-      setAiAnalysis({
-        translation: 'Chyba při komunikaci.',
-        grammaticalBreakdown: ['Zkontrolujte API klíč.'],
-        tips: '',
-      });
+      if (direction === 'cz_to_tp') {
+        const res = await analyzeCzechToTokiPonaWithGemini(inputText, apiKey);
+        setCzAnalysis(res);
+        setAiAnalysis(null);
+        sound.playCorrect();
+      } else {
+        const res = await explainTokiPonaSentenceWithGemini(inputText, apiKey);
+        setAiAnalysis(res);
+        setCzAnalysis(null);
+        sound.playCorrect();
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setAiError(msg || 'Chyba při komunikaci s AI.');
+      sound.playIncorrect();
     } finally {
       setLoadingAi(false);
     }
@@ -183,11 +205,12 @@ export const Translator: React.FC<TranslatorProps> = ({
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
+    sound.playClick();
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -207,27 +230,37 @@ export const Translator: React.FC<TranslatorProps> = ({
         <button
           onClick={() => {
             sound.playClick();
-            setDirection(direction === 'tp_to_cz' ? 'cz_to_tp' : 'tp_to_cz');
+            const newDir = direction === 'tp_to_cz' ? 'cz_to_tp' : 'tp_to_cz';
+            setDirection(newDir);
+            setInputText(
+              newDir === 'cz_to_tp'
+                ? 'Můj dobrý přítel vaří výborné jídlo pro celou rodinu.'
+                : 'toki pona li pona tawa mi'
+            );
             setAiAnalysis(null);
+            setCzAnalysis(null);
+            setAiError(null);
           }}
-          className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-xs transition-all flex items-center gap-2 text-xs font-black text-slate-800 cursor-pointer self-start sm:self-auto"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-xs transition-all flex items-center justify-center gap-2 text-xs font-black text-slate-800 cursor-pointer"
         >
-          <span>{direction === 'tp_to_cz' ? 'Toki Pona' : 'Čeština'}</span>
+          <span>{direction === 'cz_to_tp' ? 'Čeština' : 'Toki Pona'}</span>
           <ArrowRightLeft className="w-4 h-4 text-blue-600" />
-          <span>{direction === 'tp_to_cz' ? 'Čeština' : 'Toki Pona'}</span>
+          <span>{direction === 'cz_to_tp' ? 'Toki Pona' : 'Čeština'}</span>
         </button>
       </div>
 
       {/* Quick Sample Sentences */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        <span className="text-xs font-bold text-slate-400 shrink-0">Zkusit větu:</span>
-        {sampleSentences.map((sample, idx) => (
+        <span className="text-xs font-bold text-slate-400 shrink-0">Vyzkoušet větu:</span>
+        {(direction === 'cz_to_tp' ? sampleSentencesCz : sampleSentencesTp).map((sample, idx) => (
           <button
             key={idx}
             onClick={() => {
               sound.playClick();
               setInputText(sample);
               setAiAnalysis(null);
+              setCzAnalysis(null);
+              setAiError(null);
             }}
             className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-amber-100 text-[11px] font-bold text-slate-700 whitespace-nowrap transition-colors cursor-pointer border border-slate-200"
           >
@@ -242,7 +275,7 @@ export const Translator: React.FC<TranslatorProps> = ({
         <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-slate-400 mb-2">
-              <span>{direction === 'tp_to_cz' ? 'Toki Pona' : 'Čeština'}</span>
+              <span>{direction === 'tp_to_cz' ? 'Toki Pona' : 'Čeština (Vstup)'}</span>
               {direction === 'tp_to_cz' && (
                 <button
                   onClick={() => sound.speakTokiPona(inputText)}
@@ -259,21 +292,28 @@ export const Translator: React.FC<TranslatorProps> = ({
               onChange={(e) => {
                 setInputText(e.target.value);
                 setAiAnalysis(null);
+                setCzAnalysis(null);
+                setAiError(null);
               }}
               placeholder={
                 direction === 'tp_to_cz'
                   ? 'Zadej větu v Toki Pona (např. mi moku e kili)...'
-                  : 'Zadej českou větu (např. Mám rád ovoce)...'
+                  : 'Zadej český výraz nebo větu k překladu a rozboru...'
               }
               className="w-full text-base sm:text-lg font-bold text-slate-900 focus:outline-hidden resize-none placeholder:text-slate-300 font-heading"
             />
           </div>
 
           <div className="flex items-center justify-between text-xs text-slate-400 border-t border-slate-100 pt-3">
-            <span>{tokens.length} slov</span>
+            <span>{inputText.trim() ? inputText.trim().split(/\s+/).length : 0} slov</span>
             {inputText && (
               <button
-                onClick={() => setInputText('')}
+                onClick={() => {
+                  setInputText('');
+                  setAiAnalysis(null);
+                  setCzAnalysis(null);
+                  setAiError(null);
+                }}
                 className="hover:text-slate-600 font-bold cursor-pointer"
               >
                 Vymazat
@@ -286,21 +326,66 @@ export const Translator: React.FC<TranslatorProps> = ({
         <div className="p-6 rounded-3xl bg-gradient-to-br from-amber-50/60 to-white border border-amber-200/80 shadow-sm flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-amber-700 mb-2">
-              <span>{direction === 'tp_to_cz' ? 'Český význam' : 'Toki Pona'}</span>
-              <button
-                onClick={() => handleCopy(aiAnalysis?.translation || ruleBasedTranslation)}
-                title="Kopírovat překlad"
-                className="p-1 rounded-lg text-amber-700 hover:bg-amber-100 cursor-pointer"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-              </button>
+              <span className="flex items-center gap-1.5">
+                <span>{direction === 'tp_to_cz' ? 'Český význam' : 'Toki Pona Překlad'}</span>
+                {direction === 'cz_to_tp' && czAnalysis && (
+                  <span className="bg-emerald-500 text-white px-2 py-0.5 rounded-full text-[10px] font-black uppercase">
+                    AI Analyzováno
+                  </span>
+                )}
+              </span>
+              <div className="flex items-center gap-1">
+                {direction === 'cz_to_tp' && (czAnalysis?.tokiPonaSentence || ruleBasedTranslation) && (
+                  <button
+                    onClick={() => sound.speakTokiPona(czAnalysis?.tokiPonaSentence || ruleBasedTranslation)}
+                    title="Přehrát Toki Pona výslovnost"
+                    className="p-1 rounded-lg text-amber-700 hover:bg-amber-100 cursor-pointer"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() =>
+                    handleCopy(
+                      direction === 'cz_to_tp'
+                        ? czAnalysis?.tokiPonaSentence || ruleBasedTranslation
+                        : aiAnalysis?.translation || ruleBasedTranslation
+                    )
+                  }
+                  title="Kopírovat překlad"
+                  className="p-1 rounded-lg text-amber-700 hover:bg-amber-100 cursor-pointer"
+                >
+                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
-            <div className="text-base sm:text-lg font-extrabold text-emerald-900 font-heading min-h-[96px] leading-relaxed">
-              {aiAnalysis?.translation || ruleBasedTranslation || (
-                <span className="text-slate-300 font-normal text-sm">
-                  Překlad se zobrazí zde...
-                </span>
+            <div className="text-base sm:text-lg font-extrabold text-emerald-950 font-heading min-h-[96px] leading-relaxed">
+              {direction === 'cz_to_tp' ? (
+                czAnalysis?.tokiPonaSentence ? (
+                  <div className="space-y-1">
+                    <span className="text-xl sm:text-2xl text-emerald-900 block font-heading">
+                      {czAnalysis.tokiPonaSentence}
+                    </span>
+                    {czAnalysis.literalBreakdown && (
+                      <span className="text-xs text-amber-900 font-semibold block pt-1 border-t border-amber-200/60">
+                        Doslovný význam: „{czAnalysis.literalBreakdown}“
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  ruleBasedTranslation || (
+                    <span className="text-slate-300 font-normal text-sm">
+                      Zadej český text a klikni na AI překlad s rozborem...
+                    </span>
+                  )
+                )
+              ) : (
+                aiAnalysis?.translation || ruleBasedTranslation || (
+                  <span className="text-slate-300 font-normal text-sm">
+                    Překlad se zobrazí zde...
+                  </span>
+                )
               )}
             </div>
           </div>
@@ -308,22 +393,128 @@ export const Translator: React.FC<TranslatorProps> = ({
           {/* AI Call to Action */}
           <div className="border-t border-amber-200/50 pt-3 flex items-center justify-between">
             <span className="text-[11px] text-amber-800 font-medium">
-              Linguistic parser
+              {direction === 'cz_to_tp' ? 'Lingvistický AI rozbor' : 'Linguistic parser'}
             </span>
             <button
               onClick={handleDeepAiAnalyze}
               disabled={loadingAi || !inputText.trim()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-black shadow-xs transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-black shadow-xs transition-all cursor-pointer disabled:opacity-50"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{loadingAi ? 'Analyzuji...' : 'Hloubkový AI rozbor'}</span>
+              <span>
+                {loadingAi
+                  ? 'AI analyzuje výraz...'
+                  : direction === 'cz_to_tp'
+                  ? 'AI Přeložit a rozebrat'
+                  : 'Hloubkový AI rozbor'}
+              </span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* AI Deep Analysis Section if returned */}
-      {aiAnalysis && (
+      {/* AI Error Notification */}
+      {aiError && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2">
+          <Info className="w-4 h-4 shrink-0 text-rose-600" />
+          <span>{aiError}</span>
+        </div>
+      )}
+
+      {/* Enhanced Czech to Toki Pona AI Breakdown Section */}
+      {direction === 'cz_to_tp' && czAnalysis && (
+        <div className="p-6 rounded-3xl bg-white border border-emerald-200 shadow-md space-y-6 animate-in fade-in duration-200">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2.5 text-emerald-950 font-black font-heading text-lg">
+              <Lightbulb className="w-5 h-5 text-amber-500 shrink-0" />
+              <span>AI Lingvistický a filosofický rozbor českého výrazu</span>
+            </div>
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              Přeloženo do Toki Pona
+            </span>
+          </div>
+
+          {/* Word by word breakdown cards */}
+          {czAnalysis.wordByWord && czAnalysis.wordByWord.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+                Rozbor slovo od slova (Proč byla zvolena tato slova):
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {czAnalysis.wordByWord.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-500 border-b border-amber-200/40 pb-1">
+                      <span>Český pojem:</span>
+                      <strong className="text-slate-800 font-bold">{item.czPart}</strong>
+                    </div>
+                    <div className="text-base font-black text-emerald-900 font-heading">
+                      → {item.tpWord}
+                    </div>
+                    <div className="text-xs text-amber-950 leading-relaxed font-medium">
+                      {item.reason}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Applied Grammar Rules */}
+          {czAnalysis.grammarRulesApplied && czAnalysis.grammarRulesApplied.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
+                Použitá gramatická pravidla:
+              </h4>
+              <ul className="space-y-1.5">
+                {czAnalysis.grammarRulesApplied.map((rule, idx) => (
+                  <li
+                    key={idx}
+                    className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 flex items-start gap-2"
+                  >
+                    <span className="text-emerald-600 font-black">✓</span>
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Philosophical Note */}
+          {czAnalysis.philosophicalNote && (
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 text-xs text-purple-950 font-medium space-y-1">
+              <span className="font-extrabold uppercase tracking-wider text-[11px] text-purple-800 block">
+                🧠 Filosofický pohled Toki Pona:
+              </span>
+              <p className="leading-relaxed">{czAnalysis.philosophicalNote}</p>
+            </div>
+          )}
+
+          {/* Alternative Expressions */}
+          {czAnalysis.alternativeExpressions && czAnalysis.alternativeExpressions.length > 0 && (
+            <div className="space-y-1.5 pt-1 border-t border-slate-100">
+              <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+                Alternativní možnosti vyjádření:
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {czAnalysis.alternativeExpressions.map((alt, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 text-xs text-slate-700 font-bold border border-slate-200"
+                  >
+                    {alt}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* AI Deep Analysis Section for Toki Pona -> Czech */}
+      {direction === 'tp_to_cz' && aiAnalysis && (
         <div className="p-6 rounded-3xl bg-white border border-amber-200 shadow-md space-y-4 animate-in fade-in duration-200">
           <div className="flex items-center gap-2 text-amber-900 font-extrabold font-heading text-base">
             <Lightbulb className="w-5 h-5 text-amber-500" />

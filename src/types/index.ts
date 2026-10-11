@@ -84,6 +84,20 @@ export interface UserProgressState {
   savedWords: string[];
   learnedWordsCount: number;
   geminiApiKey: string;
+  customSections?: UnitSection[];
+}
+
+export interface CzechToTokiPonaAnalysis {
+  tokiPonaSentence: string;
+  literalBreakdown: string;
+  wordByWord: {
+    czPart: string;
+    tpWord: string;
+    reason: string;
+  }[];
+  grammarRulesApplied: string[];
+  philosophicalNote: string;
+  alternativeExpressions?: string[];
 }
 
 export interface VoiceChatMessage {

@@ -409,7 +409,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({
 
       {/* Bottom Evaluation Bar */}
       <div
-        className={`border-t transition-all duration-200 p-4 sm:p-6 ${
+        className={`border-t transition-all duration-200 p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] ${
           !isAnswered
             ? 'bg-white border-slate-200'
             : isCorrect
@@ -417,41 +417,41 @@ export const LessonModal: React.FC<LessonModalProps> = ({
             : 'bg-rose-50 border-rose-200 text-rose-950'
         }`}
       >
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+        <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
           {/* Feedback message */}
           {isAnswered && (
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
               {isCorrect ? (
                 <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
               ) : (
                 <AlertCircle className="w-6 h-6 text-rose-600 shrink-0 mt-0.5" />
               )}
-              <div>
+              <div className="min-w-0">
                 <div className="font-extrabold text-sm sm:text-base font-heading">
                   {isCorrect ? 'Výborně! Správná odpověď!' : 'Těsně vedle!'}
                 </div>
-                <div className="text-xs sm:text-sm mt-0.5 opacity-90">
+                <div className="text-xs sm:text-sm mt-0.5 opacity-90 break-words">
                   {currentQ.explanation}
                 </div>
               </div>
             </div>
           )}
 
-          {!isAnswered && <div />}
+          {!isAnswered && <div className="hidden sm:block" />}
 
           {/* Action Button */}
           {!isAnswered ? (
             <button
               onClick={handleCheckAnswer}
               disabled={!canCheck}
-              className="px-8 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0 text-center"
             >
               Zkontrolovat
             </button>
           ) : (
             <button
               onClick={handleNextQuestion}
-              className={`px-8 py-3.5 rounded-2xl text-white font-extrabold text-sm shadow-md transition-all cursor-pointer shrink-0 ${
+              className={`w-full sm:w-auto px-8 py-3.5 rounded-2xl text-white font-extrabold text-sm shadow-md transition-all cursor-pointer shrink-0 text-center ${
                 isCorrect ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'
               }`}
             >

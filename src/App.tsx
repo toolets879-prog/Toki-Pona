@@ -165,10 +165,25 @@ export default function App() {
     });
   };
 
+  const handleAddCustomSection = (section: import('./types/index.ts').UnitSection) => {
+    const existing = progress.customSections || [];
+    const updatedCustom = [...existing, section];
+    // Unlock first node of new section
+    const newUnlocked = [...progress.unlockedNodes];
+    if (section.nodes.length > 0 && !newUnlocked.includes(section.nodes[0].id)) {
+      newUnlocked.push(section.nodes[0].id);
+    }
+    updateProgress({
+      customSections: updatedCustom,
+      unlockedNodes: newUnlocked,
+    });
+  };
+
   const handleFinishLesson = (nodeId: string, xpEarned: number, heartsLeft: number) => {
-    // Find all nodes in sequence
+    // Find all nodes in sequence (including custom sections)
+    const allSections = [...LEARNING_SECTIONS, ...(progress.customSections || [])];
     const allNodes: LessonNode[] = [];
-    LEARNING_SECTIONS.forEach((s) => allNodes.push(...s.nodes));
+    allSections.forEach((s) => allNodes.push(...s.nodes));
 
     const currentIndex = allNodes.findIndex((n) => n.id === nodeId);
     const completedList = Array.from(new Set([...progress.completedLessons, nodeId]));
@@ -218,12 +233,14 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 pb-16">
+      <main className="flex-1 pb-24 md:pb-16 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]">
         <div className={currentTab === 'learn' ? 'block' : 'hidden'}>
           <LearningPath
             progress={progress}
             onStartLesson={(node) => setActiveLessonNode(node)}
             onOpenPractice={() => setCurrentTab('phrases')}
+            onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
+            onAddCustomSection={handleAddCustomSection}
           />
         </div>
 

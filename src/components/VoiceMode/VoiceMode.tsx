@@ -616,7 +616,7 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({
       </div>
 
       {/* Input & Voice Controls */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Microphone Toggle Button */}
         <button
           onClick={() => {
@@ -628,17 +628,18 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({
           }}
           disabled={isLoading}
           title={isListening ? 'Zastavit nahrávání hlasu' : 'Stiskněte a mluvte mikrofonem'}
-          className={`p-4 rounded-2xl transition-all cursor-pointer shadow-md disabled:opacity-50 shrink-0 ${
+          aria-label={isListening ? 'Zastavit nahrávání hlasu' : 'Stiskněte a mluvte mikrofonem'}
+          className={`p-3 sm:p-4 rounded-2xl transition-all cursor-pointer shadow-md disabled:opacity-50 shrink-0 ${
             isListening
               ? 'bg-rose-500 hover:bg-rose-600 text-white animate-pulse'
               : 'bg-white border-2 border-slate-200 hover:border-emerald-400 text-slate-700 hover:bg-emerald-50/50'
           }`}
         >
-          {isListening ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6 text-emerald-600" />}
+          {isListening ? <MicOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Mic className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />}
         </button>
 
         {/* Text Input */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-w-0">
           <input
             type="text"
             value={inputText}
@@ -651,10 +652,10 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({
             placeholder={
               isListening
                 ? 'Poslouchám váš hlas... mluvte teď...'
-                : 'Napište nebo řekněte větu v Toki Pona (např. toki!, mi moku...)'
+                : 'Věta v Toki Pona (např. toki!, mi moku...)'
             }
             disabled={isLoading}
-            className="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-emerald-500 shadow-xs disabled:opacity-60"
+            className="w-full px-3.5 py-3 sm:px-5 sm:py-4 bg-white border border-slate-200 rounded-2xl text-xs sm:text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-emerald-500 shadow-xs disabled:opacity-60"
           />
         </div>
 
@@ -662,9 +663,11 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({
         <button
           onClick={() => handleSendMessage()}
           disabled={isLoading || !inputText.trim()}
-          className="p-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white shadow-md disabled:opacity-40 transition-all cursor-pointer shrink-0"
+          title="Odeslat zprávu"
+          aria-label="Odeslat zprávu"
+          className="p-3 sm:p-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white shadow-md disabled:opacity-40 transition-all cursor-pointer shrink-0"
         >
-          <Send className="w-6 h-6" />
+          <Send className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </div>
     </div>

@@ -8,9 +8,11 @@ import {
   Gift,
   HelpCircle,
 } from 'lucide-react';
+import { Wand2, Plus, Sparkles as SparklesIcon } from 'lucide-react';
 import { LEARNING_SECTIONS } from '../../data/learningPath.ts';
-import { LessonNode, UserProgressState } from '../../types/index.ts';
+import { LessonNode, UnitSection, UserProgressState } from '../../types/index.ts';
 import { NodePreviewModal } from './NodePreviewModal.tsx';
+import { AiCourseGeneratorModal } from './AiCourseGeneratorModal.tsx';
 import { sound } from '../../lib/audio.ts';
 import confetti from 'canvas-confetti';
 
@@ -18,16 +20,34 @@ interface LearningPathProps {
   progress: UserProgressState;
   onStartLesson: (node: LessonNode) => void;
   onOpenPractice: () => void;
+  onOpenApiKeyModal: () => void;
+  onAddCustomSection: (section: UnitSection) => void;
 }
 
 export const LearningPath: React.FC<LearningPathProps> = ({
   progress,
   onStartLesson,
   onOpenPractice,
+  onOpenApiKeyModal,
+  onAddCustomSection,
 }) => {
   const [selectedNode, setSelectedNode] = useState<LessonNode | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openedChests, setOpenedChests] = useState<string[]>([]);
+  const [isAiGeneratorOpen, setIsAiGeneratorOpen] = useState(false);
+
+  // Combine standard built-in sections with any user-generated custom AI sections
+  const allSections: UnitSection[] = [
+    ...LEARNING_SECTIONS,
+    ...(progress.customSections || []),
+  ];
+
+  // Calculate if user finished all standard curriculum courses
+  const builtInNodes = LEARNING_SECTIONS.flatMap((s) => s.nodes);
+  const finishedBuiltInCount = builtInNodes.filter((n) =>
+    progress.completedLessons.includes(n.id)
+  ).length;
+  const isAllStandardCompleted = finishedBuiltInCount >= builtInNodes.length;
 
   const handleNodeClick = (node: LessonNode, isUnlocked: boolean) => {
     if (!isUnlocked) {
@@ -68,7 +88,7 @@ export const LearningPath: React.FC<LearningPathProps> = ({
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-8 overflow-x-hidden">
       {/* Welcome banner & Quick Action */}
       <div className="mb-8 p-5 rounded-3xl bg-gradient-to-r from-amber-400 via-amber-500 to-emerald-500 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10">
@@ -92,6 +112,16 @@ export const LearningPath: React.FC<LearningPathProps> = ({
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/15 text-xs font-bold">
               <span>Splněno {progress.completedLessons.length} lekcí</span>
             </div>
+            <button
+              onClick={() => {
+                sound.playClick();
+                setIsAiGeneratorOpen(true);
+              }}
+              className="px-4 py-2 rounded-xl bg-purple-700/80 hover:bg-purple-700 text-white text-xs font-extrabold shadow-sm transition-all cursor-pointer flex items-center gap-1.5 border border-purple-300/40"
+            >
+              <Wand2 className="w-3.5 h-3.5 text-amber-300" />
+              <span>AI Generátor kurzu</span>
+            </button>
           </div>
         </div>
         <div className="absolute -right-4 -bottom-6 text-8xl opacity-20 font-bold select-none pointer-events-none">
@@ -99,9 +129,42 @@ export const LearningPath: React.FC<LearningPathProps> = ({
         </div>
       </div>
 
+      {/* Completion Trophy Banner when all standard courses finished */}
+      {isAllStandardCompleted && (
+        <div className="mb-10 p-6 rounded-3xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-800 text-white shadow-xl border-2 border-purple-300 relative overflow-hidden animate-in zoom-in-95 duration-300">
+          <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+            <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 shadow-inner">
+              <Trophy className="w-10 h-10 text-amber-300 animate-bounce" />
+            </div>
+            <div className="space-y-1.5 flex-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Dokončil(a) jsi celou základní osnovu!</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black font-heading">
+                pona suli a! Jsi mistr Toki Pona!
+              </h3>
+              <p className="text-purple-100 text-xs sm:text-sm leading-relaxed">
+                Úspěšně jsi zvládl(a) všechny 4 sekce. Nyní si můžeš pomocí Google AI vygenerovat nový kurz o <strong>čemkoli chceš</strong> – například o vesmíru, vaření, pohádkách nebo filosofii – a ten se ti ihned přidá na mapu!
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                sound.playFanfare();
+                setIsAiGeneratorOpen(true);
+              }}
+              className="py-3 px-5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs sm:text-sm shadow-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0 animate-pulse"
+            >
+              <Wand2 className="w-4 h-4" />
+              <span>Vygenerovat nový kurz</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Sections and Winding Path */}
       <div className="space-y-12">
-        {LEARNING_SECTIONS.map((section, sIndex) => {
+        {allSections.map((section, sIndex) => {
           const completedInSection = section.nodes.filter((n) =>
             progress.completedLessons.includes(n.id)
           ).length;
@@ -268,6 +331,15 @@ export const LearningPath: React.FC<LearningPathProps> = ({
             ? progress.completedLessons.includes(selectedNode.id)
             : false
         }
+      />
+
+      {/* AI Course Generator Modal */}
+      <AiCourseGeneratorModal
+        isOpen={isAiGeneratorOpen}
+        onClose={() => setIsAiGeneratorOpen(false)}
+        apiKey={progress.geminiApiKey}
+        onOpenApiKeyModal={onOpenApiKeyModal}
+        onCourseGenerated={onAddCustomSection}
       />
     </div>
   );
